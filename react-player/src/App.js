@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 //import Styles
 import "./styles/app.scss";
-
 //Adding Components
 import Song from "./components/Song";
 import Player from "./components/Player";
