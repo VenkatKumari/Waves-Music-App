@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
@@ -16,7 +16,20 @@ const Player = ({
   setSongInfo,
   songs,
   setCurrentSong,
+  setSongs
 }) => {
+  //UseEffect 
+    useEffect(()=>{
+      const newSongs = songs.map((song) => {
+        if (song.id === currentSong.id) {
+          return { ...song, active: true };
+        } else {
+          return { ...song, active: false };
+        }
+      });
+      setSongs(newSongs);
+
+    }, [currentSong])
   //EventHandlers
   const playSongHandler = () => {
     isPlaying ? audioRef.current.pause() : audioRef.current.play();
@@ -43,8 +56,16 @@ const Player = ({
   const skipTrackHandler = (direction) => {
     let currentIndex = songs.findIndex((song) => song.id === currentSong.id);
     if (direction === "skip-forward") {
-      setCurre;
+      setCurrentSong(songs[(currentIndex + 1) % songs.length]);
     }
+    if(direction === 'skip-back'){
+      if((currentIndex - 1) %songs.length === -1 ){
+        setCurrentSong(songs[songs.length - 1]);
+        return;
+      }
+      setCurrentSong(songs[(currentIndex - 1) % songs.length]);
+    }
+   
   };
 
   return (
@@ -58,7 +79,7 @@ const Player = ({
           onChange={dragHandler}
           type="range"
         />
-        <p>{getTime(songInfo.duration)}</p>
+        <p>{songInfo.duration ? getTime(songInfo.duration) : '0:00' }</p>
       </div>
       <div className="play-control">
         <FontAwesomeIcon
@@ -75,7 +96,7 @@ const Player = ({
         />
 
         <FontAwesomeIcon
-          onClick={() => skipTrackHandler("skip⁻forward")}
+          onClick={() => skipTrackHandler("skip-forward")}
           className="skip-forward"
           size="2x"
           icon={faAngleRight}
